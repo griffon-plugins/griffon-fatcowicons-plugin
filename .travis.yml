@@ -4,7 +4,7 @@ install:
     - TERM=dumb ./gradlew -q assemble
 
 script:
-    - TERM=dumb ./gradlew build jacocoTestReport
+    - TERM=dumb ./gradlew build jacocoTestReport jacocoRootReport
 
 jdk:
     - oraclejdk7
@@ -14,4 +14,4 @@ before_install:
     - sh -e /etc/init.d/xvfb start
 
 after_success:
-    ./gradlew jacocoRootReport coveralls
+    ./gradlew coveralls
