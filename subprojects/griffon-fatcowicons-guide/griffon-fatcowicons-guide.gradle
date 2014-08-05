@@ -135,34 +135,80 @@ java2html {
     }
 }
 
+task generateIconCheatSheet << {
+    File rootIconDir = project(':griffon-fatcowicons-core').file('src/main/resources/fatcow')
+    List sizes = [16, 32]
+
+    Map<String, List> data = [:]
+    for (size in sizes) {
+        new File(rootIconDir, "${size}x${size}/".toString()).eachFileRecurse { file ->
+            List sizesPerIcon = data.get(file.name - '.png', [])
+            sizesPerIcon << size
+        }
+    }
+
+    String document = '''
+    [[icon_sheat_cheet]]
+    = Icon Cheat Sheet
+
+    The following table shows all available icons.
+
+    [columns="3*", options="header"]
+    |===
+    | Name | 16 | 32
+    '''.stripIndent(4)
+
+    data.each { n, ss ->
+        document += "| ${n} "
+        document += ((16 in ss) ? "| image:16x16/${n}.png[${n}]" : '| -')
+        document += ((32 in ss) ? "| image:32x32/${n}.png[${n}]" : '| -')
+        document += '\n'
+    }
+
+    document += '|===\n'
+
+    document += '\n\n'
+    File f = file("${buildDir}/tmp/icon-cheat-sheet.adoc")
+    f.parentFile.mkdirs()
+    f.text = document
+}
+
 asciidoctor {
+    dependsOn generateIconCheatSheet
     baseDir = project.file('src/asciidoc')
     options = [
         attributes: [
-            toc                     : 'left',
-            doctype                 : 'book',
-            icons                   : 'font',
-            encoding                : 'utf-8',
-            sectlink                : true,
-            sectanchors             : true,
-            numbered                : true,
-            linkattrs               : true,
-            imagesdir               : 'images',
-            linkcss                 : true,
-            stylesheet              : 'css/style.css',
-            'source-highlighter'    : 'coderay',
-            'coderay-linenums-mode' : 'inline',
-            'project-name'          : 'Griffon Fatcow Icons Plugin',
-            'project-author'        : 'Andres Almiray',
-            'project-version'       : project.version,
-            'project-group'         : project.group,
-            'project-url'           : project.projectWebsiteUrl,
-            'project-vcs'           : project.projectVcsUrl,
-            'project-issue-tracker' : project.projectIssueTrackerUrl,
-            'griffon-version'       : rootProject.griffonVersion
+            toc                    : 'left',
+            doctype                : 'book',
+            icons                  : 'font',
+            encoding               : 'utf-8',
+            sectlink               : true,
+            sectanchors            : true,
+            numbered               : true,
+            linkattrs              : true,
+            imagesdir              : 'images',
+            linkcss                : true,
+            stylesheet             : 'css/style.css',
+            'source-highlighter'   : 'coderay',
+            'coderay-linenums-mode': 'inline',
+            'project-name'         : 'Griffon Fatcow Icons Plugin',
+            'project-author'       : 'Andres Almiray',
+            'project-version'      : project.version,
+            'project-group'        : project.group,
+            'project-url'          : project.projectWebsiteUrl,
+            'project-vcs'          : project.projectVcsUrl,
+            'project-issue-tracker': project.projectIssueTrackerUrl,
+            'griffon-version'      : rootProject.griffonVersion
         ]
     ]
     sourceDocumentName = project.file('src/asciidoc/index.adoc')
+
+    doFirst { task ->
+        copy {
+            into file("${task.outputDir}/images")
+            from project(':griffon-fatcowicons-core').file('src/main/resources/fatcow')
+        }
+    }
 
     doLast { task ->
         copy {
