@@ -8,8 +8,8 @@ image:http://img.shields.io/:semver-{version}-red.svg["Semantic Versioning", lin
 
 ---
 
-Provides a shortcut for adding fatcow icons based on
-http://www.zeusboxstudio.com/[ZeusBox Studio's Fatcow Icons, window="_blank"].
+Provides a shortcut for adding icons based on
+http://www.fatcow.com/free-icons[Fatcow's free icon set, window="_blank"].
 
 Refer to the link:http://griffon-plugins.github.io/griffon-fatcowicons-plugin/[plugin guide, window="_blank"] for
 further information on configuration and usage.

@@ -51,6 +51,6 @@ The following nodes will become available on a GroovyFX View
 
 Both `fatcowIcon` Nodes support the following properties
 
-icon:: The name of the icon, such as +rss+ or +folder+.
+icon:: The name of the icon, such as +rss+ or +atm+.
 size:: The size of the icon. Either +16+ or +32+.
 

@@ -1,4 +1,4 @@
 
-:link_fatcowicons: link:http://www.zeusboxstudio.com/[ZeusBox Studio's Fatcow Icons, window="_blank"]
+:link_fatcowicons: link:http://www.fatcow.com/free-icons[Fatcow's free icon set, window="_blank"]
 :api_link_fatcowicon_javafx: link:api/griffon/javafx/support/fatcowicons/FatcowIcon.html[griffon.javafx.support.fatcowicons.FatcowIcon, window="_blank"]
 :api_link_fatcowicon_swing: link:api/griffon/swing/support/fatcowicons/FatcowIcon.html[griffon.swing.support.fatcowicons.FatcowIcon, window="_blank"]
