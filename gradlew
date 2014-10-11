@@ -50,7 +50,7 @@ fi
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link
 PRG="$0"
-# Natcow this for relative symlinks.
+# Need this for relative symlinks.
 while [ -h "$PRG" ] ; do
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`

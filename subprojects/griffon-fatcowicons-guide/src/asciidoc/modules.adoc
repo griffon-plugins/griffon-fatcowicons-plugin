@@ -13,9 +13,9 @@ binding if the wrong type has been applied by the Griffon runtime.
 
 == JavaFX
 
-Module name: +fatcowicons-javafx-groovy+
+Module name: `fatcowicons-javafx-groovy`
 
-Depends on: +javafx-groovy+
+Depends on: `javafx-groovy`
 
 [source,java,options="nowrap"]
 ----
@@ -27,14 +27,14 @@ The following nodes will become available on a Groovy View
 [options="2*,header"]
 |===
 | Node     | Type
-| fatcowIcon | +{api_link_fatcowicon_javafx}+
+| fatcowIcon | `{api_link_fatcowicon_javafx}`
 |===
 
 == Swing
 
-Module name: +fatcowicons-swing-groovy+
+Module name: `fatcowicons-swing-groovy`
 
-Depends on: +swing-groovy+
+Depends on: `swing-groovy`
 
 [source,java,options="nowrap"]
 ----
@@ -46,11 +46,11 @@ The following nodes will become available on a Groovy View
 [options="2*,header"]
 |===
 | Node     | Type
-| fatcowIcon | +{api_link_fatcowicon_swing}+
+| fatcowIcon | `{api_link_fatcowicon_swing}`
 |===
 
 Both `fatcowIcon` Nodes support the following properties
 
-icon:: The name of the icon, such as +rss+ or +atm+.
-size:: The size of the icon. Either +16+ or +32+.
+icon:: The name of the icon, such as `rss` or `atm`.
+size:: The size of the icon. Either `16` or `32`.
 
