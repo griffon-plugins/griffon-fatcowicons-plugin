@@ -1,0 +1,39 @@
+
+[[_usage]]
+= Usage
+
+== Swing
+
+The `griffon-fatcow-swing:{project-version}` JAR provides a new Icon class: `{api_link_fatcowicon_swing}`.
+You may use this class with any Swing component that supports an Icon property.
+
+== JavaFX
+
+The `griffon-fatcow-javafx:{project-version}` JAR provides a new Node class: `{api_link_fatcowicon_javafx}`.
+You may use this class with any JavaFX control that accepts a graphic property. You may also use the icon directly as
+it is a subclass of `javafx.scene.control.Label`.
+
+== Action Resources
+
+Action icons can be set using resources files if the following format is used:
+
+[source]
+----
+iconClassName|name:size
+----
+
+Here's an example using the Swing icon
+
+[source,java,options="nowrap"]
+.griffon-app/i18n/messages.properties
+----
+org.example.AppController.action.Preferences.icon=griffon.swing.support.fatcow.FatcowIcon|star:32
+----
+
+The JavaFX version for the same icon value is
+
+[source,java,options="nowrap"]
+.griffon-app/i18n/messages.properties
+----
+org.example.AppController.action.Preferences.icon=griffon.javafx.support.fatcow.FatcowIcon|star:32
+----

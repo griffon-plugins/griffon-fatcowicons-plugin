@@ -19,15 +19,19 @@ import griffon.plugins.fatcowicons.Fatcow;
 import javafx.scene.image.Image;
 
 import javax.annotation.Nonnull;
+import java.net.URL;
 
+import static griffon.plugins.fatcowicons.Fatcow.invalidDescription;
+import static griffon.util.GriffonNameUtils.requireNonBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
  */
 public class FatcowIcon extends Image {
-    private final Fatcow fatcow;
-    private final int size;
+    private static final String ERROR_FATCOW_NULL = "Argument 'fatcow' must not be null.";
+    private Fatcow fatcow;
+    private int size;
 
     public FatcowIcon(@Nonnull Fatcow fatcow) {
         this(fatcow, 16);
@@ -35,19 +39,46 @@ public class FatcowIcon extends Image {
 
     public FatcowIcon(@Nonnull Fatcow fatcow, int size) {
         super(toURL(fatcow, size), true);
-        this.fatcow = fatcow;
+        this.fatcow = requireNonNull(fatcow, ERROR_FATCOW_NULL);
         this.size = size;
     }
 
     public FatcowIcon(@Nonnull String description) {
-        this(Fatcow.findByDescription(description));
+        super(toURL(description));
+        this.fatcow = Fatcow.findByDescription(description);
+
+        String[] parts = description.split(":");
+        if (parts.length == 2) {
+            try {
+                this.size = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                throw invalidDescription(description, e);
+            }
+        } else if (size == 0) {
+            size = 16;
+        }
     }
 
     @Nonnull
     private static String toURL(@Nonnull Fatcow fatcow, int size) {
-        requireNonNull(fatcow, "Argument 'fatcow' must not be null.");
+        requireNonNull(fatcow, ERROR_FATCOW_NULL);
         String resource = fatcow.asResource(size);
-        return Thread.currentThread().getContextClassLoader().getResource(resource).toExternalForm();
+        URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        if (url == null) {
+            throw new IllegalArgumentException("Icon " + fatcow + ":" + size + " does not exist");
+        }
+        return url.toExternalForm();
+    }
+
+    @Nonnull
+    private static String toURL(@Nonnull String description) {
+        requireNonBlank(description, "Argument 'description' must not be blank");
+        String resource = Fatcow.asResource(description);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        if (url == null) {
+            throw new IllegalArgumentException("Icon " + description + " does not exist");
+        }
+        return url.toExternalForm();
     }
 
     @Nonnull

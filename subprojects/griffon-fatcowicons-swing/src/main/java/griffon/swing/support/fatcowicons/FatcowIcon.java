@@ -19,16 +19,25 @@ import griffon.plugins.fatcowicons.Fatcow;
 
 import javax.annotation.Nonnull;
 import javax.swing.ImageIcon;
+import java.awt.Toolkit;
 import java.net.URL;
 
+import static griffon.plugins.fatcowicons.Fatcow.invalidDescription;
+import static griffon.plugins.fatcowicons.Fatcow.requireValidSize;
+import static griffon.util.GriffonNameUtils.requireNonBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
  */
 public class FatcowIcon extends ImageIcon {
-    private final Fatcow fatcow;
-    private final int size;
+    private static final String ERROR_FATCOW_NULL = "Argument 'fatcow' must not be null";
+    private Fatcow fatcow;
+    private int size;
+
+    public FatcowIcon() {
+        this(Fatcow.findByDescription("star:16"));
+    }
 
     public FatcowIcon(@Nonnull Fatcow fatcow) {
         this(fatcow, 16);
@@ -36,19 +45,24 @@ public class FatcowIcon extends ImageIcon {
 
     public FatcowIcon(@Nonnull Fatcow fatcow, int size) {
         super(toURL(fatcow, size));
-        this.fatcow = fatcow;
+        this.fatcow = requireNonNull(fatcow, ERROR_FATCOW_NULL);
         this.size = size;
     }
 
     public FatcowIcon(@Nonnull String description) {
         this(Fatcow.findByDescription(description));
+        setFatcow(description);
     }
 
     @Nonnull
     private static URL toURL(@Nonnull Fatcow fatcow, int size) {
-        requireNonNull(fatcow, "Argument 'fatcow' must not be null.");
+        requireNonNull(fatcow, ERROR_FATCOW_NULL);
         String resource = fatcow.asResource(size);
-        return Thread.currentThread().getContextClassLoader().getResource(resource);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        if (url == null) {
+            throw new IllegalArgumentException("Icon " + fatcow + " does not exist");
+        }
+        return url;
     }
 
     @Nonnull
@@ -56,7 +70,36 @@ public class FatcowIcon extends ImageIcon {
         return fatcow;
     }
 
+    public void setFatcow(@Nonnull Fatcow fatcow) {
+        this.fatcow = requireNonNull(fatcow, ERROR_FATCOW_NULL);
+        setImage(Toolkit.getDefaultToolkit().getImage(toURL(fatcow, size)));
+    }
+
+    public void setFatcow(@Nonnull String description) {
+        requireNonBlank(description, "Argument 'description' must not be blank");
+
+        String[] parts = description.split(":");
+        if (parts.length == 2) {
+            try {
+                int s = Integer.parseInt(parts[1]);
+                size = requireValidSize(s);
+            } catch (NumberFormatException e) {
+                throw invalidDescription(description, e);
+            }
+        } else if (size == 0) {
+            size = 16;
+        }
+
+        fatcow = Fatcow.findByDescription(description);
+        setImage(Toolkit.getDefaultToolkit().getImage(toURL(fatcow, size)));
+    }
+
     public int getSize() {
         return size;
+    }
+
+    public void setSize(int size) {
+        this.size = requireValidSize(size);
+        setImage(Toolkit.getDefaultToolkit().getImage(toURL(fatcow, size)));
     }
 }

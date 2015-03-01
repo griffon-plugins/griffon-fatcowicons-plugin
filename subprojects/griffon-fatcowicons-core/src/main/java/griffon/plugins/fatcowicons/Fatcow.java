@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 
 import static griffon.util.GriffonClassUtils.requireState;
 import static griffon.util.GriffonNameUtils.isBlank;
+import static griffon.util.GriffonNameUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
@@ -2425,6 +2426,8 @@ public enum Fatcow {
     ZOOM_SELECTION("zoom_selection"),
     ZOOTOOL("zootool");
 
+    private static final String ERROR_DESCRIPTION_BLANK = "Argument 'description' must not be blank";
+
     private final String description;
 
     Fatcow(@Nonnull String description) {
@@ -2438,21 +2441,112 @@ public enum Fatcow {
 
     @Nonnull
     public String asResource(int size) {
-        requireState(size == 16 || size == 32, "Argument 'size' must be either 16 or 32.");
+        requireValidSize(size);
         return "fatcow/" + size + "x" + size + "/" + description + ".png";
     }
 
     @Nonnull
-    public static Fatcow findByDescription(@Nonnull String description) {
-        if (isBlank(description)) {
-            throw new IllegalArgumentException("Description " + description + " is not a valid Fatcow icon description");
+    public static String asResource(@Nonnull String description) {
+        int size = 16;
+        checkDescription(description);
+
+        String[] parts = description.split(":");
+        if (parts.length == 2) {
+            try {
+                size = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                throw invalidDescription(description, e);
+            }
         }
 
-        for (Fatcow fatcow : values()) {
-            if (fatcow.description.equalsIgnoreCase(description)) {
+        Fatcow fatcow = findByDescription(description, size);
+        return fatcow.asResource(size);
+    }
+
+    @Nonnull
+    public static Fatcow findByDescription(@Nonnull String description) {
+        checkDescription(description);
+
+        Fatcow fatcow = null;
+        String[] parts = description.split(":");
+        for (Fatcow f : values()) {
+            if (f.description.equalsIgnoreCase(parts[0])) {
+                fatcow = f;
+                break;
+            }
+        }
+
+        if (fatcow == null) {
+            throw invalidDescription(description);
+        }
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (parts.length == 2) {
+            int size = 16;
+            try {
+                size = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                throw invalidDescription(description, e);
+            }
+            if (classLoader.getResource(fatcow.asResource(size)) != null) {
                 return fatcow;
             }
         }
-        throw new IllegalArgumentException("Description " + description + " is not a a valid Fatcow icon description");
+
+        if (classLoader.getResource(fatcow.asResource(16)) != null) {
+            return fatcow;
+        } else if (classLoader.getResource(fatcow.asResource(32)) != null) {
+            return fatcow;
+        }
+
+        throw invalidDescription(description);
+    }
+
+    @Nonnull
+    public static Fatcow findByDescription(@Nonnull String description, int size) {
+        checkDescription(description);
+
+        Fatcow fatcow = null;
+        String[] parts = description.split(":");
+        for (Fatcow f : values()) {
+            if (f.description.equalsIgnoreCase(parts[0])) {
+                fatcow = f;
+                break;
+            }
+        }
+
+        if (fatcow == null) {
+            throw invalidDescription(description);
+        }
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader.getResource(fatcow.asResource(size)) != null) {
+            return fatcow;
+        }
+
+        throw invalidDescription(description);
+    }
+
+    public static int requireValidSize(int size) {
+        requireState(size == 16 || size == 32, "Argument 'size' must be either 16 or 32.");
+        return size;
+    }
+
+    private static void checkDescription(String description) {
+        if (isBlank(description)) {
+            throw invalidDescription(description);
+        }
+    }
+
+    @Nonnull
+    public static IllegalArgumentException invalidDescription(String description) {
+        requireNonBlank(description, ERROR_DESCRIPTION_BLANK);
+        throw new IllegalArgumentException("Description " + description + " is not a valid Fatcow icon description");
+    }
+
+    @Nonnull
+    public static IllegalArgumentException invalidDescription(@Nonnull String description, Exception e) {
+        requireNonBlank(description, ERROR_DESCRIPTION_BLANK);
+        throw new IllegalArgumentException("Description " + description + " is not a valid Fatcow icon description", e);
     }
 }
