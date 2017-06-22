@@ -4,3 +4,5 @@
 
 Provides a shortcut for adding fatcow icons based on {link_fatcowicons}.
 
+Griffon version: {griffon-version}
+
